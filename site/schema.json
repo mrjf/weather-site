@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Weather from six sources, by zip code",
+  "type": "object",
+  "required": ["updated", "default_zip", "zips"],
+  "properties": {
+    "updated": { "type": "string", "format": "date-time", "description": "when the hourly job last ran (UTC)" },
+    "default_zip": { "type": "string", "description": "the zip the page shows with no ?zip=" },
+    "zips": {
+      "type": "object",
+      "description": "one report per tracked zip code, keyed by zip",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["zip", "place", "fetched_at", "sources", "forecast"],
+        "properties": {
+          "zip": { "type": "string" },
+          "place": {
+            "type": "object",
+            "properties": {
+              "city": { "type": "string" }, "state": { "type": "string" },
+              "lat": { "type": "number" }, "lon": { "type": "number" }
+            }
+          },
+          "fetched_at": { "type": "number", "description": "unix seconds" },
+          "today": { "type": ["string", "null"], "format": "date", "description": "the place's local date the forecast starts on" },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["source", "label", "ok"],
+              "properties": {
+                "source": { "type": "string", "enum": ["weather_com", "wunderground", "open_meteo", "noaa", "google", "yahoo"] },
+                "label": { "type": "string" },
+                "page_url": { "type": "string", "format": "uri", "description": "that source's own page for this place" },
+                "ok": { "type": "boolean" },
+                "error": { "type": ["string", "null"] },
+                "current": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "temp_f": { "type": ["integer", "null"] }, "feels_like_f": { "type": ["integer", "null"] },
+                    "condition": { "type": "string" }, "humidity_pct": { "type": ["integer", "null"] },
+                    "wind_mph": { "type": ["integer", "null"] }, "observed": { "type": ["string", "null"] },
+                    "station": { "type": "string" }
+                  }
+                },
+                "daily": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "date": { "type": "string", "format": "date" }, "high_f": { "type": ["integer", "null"] },
+                      "low_f": { "type": ["integer", "null"] }, "condition": { "type": "string" },
+                      "precip_pct": { "type": ["integer", "null"], "description": "chance of rain, percent" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "forecast": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "date": { "type": "string" }, "by_source": { "type": "object" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-sapi": {
+    "params": {
+      "zip": "5-digit US zip code; one of the tracked zips (default: default_zip). An untracked zip returns { tracked: false, tracked_zips }",
+      "source": "only these sources: weather_com, wunderground, open_meteo, noaa, google, yahoo (comma-separated or repeated)"
+    }
+  }
+}
