@@ -32,7 +32,7 @@ jobs:
         env:
           SITE_DIR: _site
           PYTHONPATH: app
-          WEATHER_PAGES_ZIPS: "94930"
+          WEATHER_PAGES_ZIPS: "94930,10001"
         run: "python -m weather.pages_build"
       - uses: actions/upload-pages-artifact@v5
         with:

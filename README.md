@@ -11,7 +11,7 @@ Published from an Imbue Studio workspace app (`weather`) by its Publish to GitHu
 
 Settings chosen when it was published:
 
-- `WEATHER_PAGES_ZIPS` = `94930`
+- `WEATHER_PAGES_ZIPS` = `94930,10001`
 
 ## Data for agents (sapi)
 
