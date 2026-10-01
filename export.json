@@ -4,7 +4,7 @@
   "repository": "mrjf/weather-site",
   "site_url": "https://mrjf.github.io/weather-site/",
   "settings": {
-    "WEATHER_PAGES_ZIPS": "94930,10001"
+    "WEATHER_PAGES_ZIPS": "94930"
   },
   "build": "python -m weather.pages_build",
   "schedule": "23 * * * *",
