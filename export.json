@@ -9,5 +9,5 @@
   "build": "python -m weather.pages_build",
   "schedule": "23 * * * *",
   "sapi": true,
-  "exported_at": "2026-10-01T22:14:04Z"
+  "exported_at": "2026-10-01T22:17:14Z"
 }
