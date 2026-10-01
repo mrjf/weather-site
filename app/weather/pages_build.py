@@ -41,9 +41,9 @@ def parse_zips(value: str) -> list[str]:
     return list(dict.fromkeys(zips))[:MAX_ZIPS]
 
 
-def build(site_dir: Path, zips: list[str]) -> dict[str, Any]:
-    # The app's snapshot store is not wanted here; send it somewhere disposable.
-    runner.DATA_DIR = Path(tempfile.mkdtemp(prefix="weather-pages-"))
+def build(site_dir: Path, zips: list[str], scratch_dir: Path) -> dict[str, Any]:
+    # The app's snapshot store is not wanted here; send it to a disposable folder.
+    runner.DATA_DIR = scratch_dir
     # On Actions there is no Fortress browser: let Playwright use the Chromium it installed.
     if not Path(sources.FORTRESS_EXECUTABLE).exists():
         sources.FORTRESS_EXECUTABLE = None  # type: ignore[assignment]
@@ -87,7 +87,8 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     site_dir = Path(os.environ.get("SITE_DIR", "_site"))
     zips = parse_zips(os.environ.get("WEATHER_PAGES_ZIPS", "94930"))
-    data = build(site_dir, zips)
+    with tempfile.TemporaryDirectory(prefix="weather-pages-") as scratch:
+        data = build(site_dir, zips, Path(scratch))
     if not any(s["ok"] for report in data["zips"].values() for s in report["sources"]):
         # Nothing answered at all: fail the run so the old site stays up instead.
         sys.exit("No weather source answered for any zip code")
